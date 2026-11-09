@@ -70,16 +70,10 @@
             <span aria-hidden="true">·</span>
             <span id="busuanzi_container_site_uv">Visitors <span id="busuanzi_value_site_uv">…</span></span>
           </div>
-          <span>© {{ site.time | date: "%Y" }} Yuhao He · Updated {{ site.time | date: "%Y/%m" }}{% if page.url == "/" %}<a id="owner-analytics" href="{{ '/github-traffic-vault/' | relative_url }}" hidden aria-label="Owner repository analytics" title="Owner access" style="margin-left:12px;font:11px/1.5 'JetBrains Mono',monospace;color:var(--text-3)">Analytics ↗</a>{% endif %}</span>
+          <span>© {{ site.time | date: "%Y" }} Yuhao He · Updated {{ site.time | date: "%Y/%m" }}{% if page.url == "/" %}<a id="owner-analytics" href="{{ '/github-traffic-vault/' | relative_url }}" aria-label="Repository analytics" title="Repository analytics" style="margin-left:12px;font:11px/1.5 'JetBrains Mono',monospace;color:var(--text-3)">Analytics ↗</a>{% endif %}</span>
         </footer>
       </main>
     </div>
     <script src="{{ '/assets/js/academic.js' | relative_url }}?v=20261106" defer></script>
-    {% if page.url == "/" %}
-    <script>
-      // This marker controls presentation only. Private data access is verified by GitHub.
-      try { if (localStorage.getItem('github-traffic-owner') === 'Anson-He') document.getElementById('owner-analytics').hidden = false; } catch (e) {}
-    </script>
-    {% endif %}
   </body>
 </html>
