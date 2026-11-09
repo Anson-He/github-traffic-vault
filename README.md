@@ -13,7 +13,7 @@
 2. 设置合理的有效期并在到期前续期。Token 不要提交到代码或发到聊天。
 3. 打开 https://github.com/Anson-He/github-traffic-vault/settings/secrets/actions ，新建 Repository secret，名称为 `TRAFFIC_TOKEN`，值为上一步 Token。
 4. 打开本仓库 **Actions → Collect repository traffic → Run workflow**，选择 `main` 并运行。等待成功后，`data/dashboard.json`、`data/traffic.csv` 和原始快照会出现。
-5. 此后每天 **北京时间 10:23 / UTC 02:23** 自动运行，无需电脑开机。首次应手动运行，不必等待明天。
+5. 此后每天 **北京时间 09:00 / UTC 01:00** 自动运行，无需电脑开机。首次应手动运行，不必等待明天。
 
 本工作流的 `GITHUB_TOKEN` 仅负责写入当前归档仓库；跨仓库流量读取使用上面的 `TRAFFIC_TOKEN`。不要试图通过 `permissions: contents: write` 替代 Traffic API 所需的 Administration 读取权限。
 
