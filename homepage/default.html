@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% if page.url == "/" %}Yuhao He | 何宇浩{% elsif page.title %}{{ page.title | strip_html | escape }} · Yuhao He{% else %}Yuhao He{% endif %}</title>
+    <meta name="description" content="{{ page.excerpt | default: site.description | strip_html | strip_newlines | escape }}">
+    <meta name="author" content="Yuhao He">
+    {% if page.visible == false %}<meta name="robots" content="noindex, nofollow">{% endif %}
+    <meta name="keywords" content="Yuhao He, He Yuhao, 何宇浩, Macau University of Science and Technology, secure AI, trustworthy AI, adversarial machine learning, AI-generated content security">
+    <link rel="canonical" href="{{ page.url | absolute_url }}">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{% if page.url == "/" %}Yuhao He | 何宇浩{% else %}{{ page.title | default: site.title | strip_html | escape }}{% endif %}">
+    <meta property="og:description" content="{{ page.excerpt | default: site.description | strip_html | strip_newlines | escape }}">
+    <meta property="og:url" content="{{ page.url | absolute_url }}">
+    <meta property="og:image" content="{{ '/images/google-scholar-avatar.jpg' | absolute_url }}">
+    <link rel="icon" type="image/svg+xml" sizes="any" href="{{ '/images/favicon-yh.svg' | relative_url }}?v=20261107-yh">
+    {% if page.url == "/" %}
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Yuhao He",
+        "alternateName": "何宇浩",
+        "url": "{{ site.url }}",
+        "image": "{{ '/images/google-scholar-avatar.jpg' | absolute_url }}",
+        "jobTitle": "Ph.D. Student in Artificial Intelligence",
+        "affiliation": {
+          "@type": "CollegeOrUniversity",
+          "name": "Macau University of Science and Technology"
+        },
+        "sameAs": [
+          "https://scholar.google.com/citations?user=Ug6Zp5IAAAAJ",
+          "https://dblp.org/pid/257/8328-1.html",
+          "https://orcid.org/0009-0002-8778-5025",
+          "https://github.com/Anson-He"
+        ]
+      }
+    </script>
+    {% endif %}
+    <meta name="color-scheme" content="light dark">
+    <script>
+      try {
+        var saved = localStorage.getItem('theme');
+        document.documentElement.dataset.theme = saved === 'light' || saved === 'dark' ? saved : (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      } catch (e) {}
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ '/assets/css/academic.css' | relative_url }}?v=20261107-mobile-scroll">
+  </head>
+  <body>
+    <a class="skip-link" href="#layout-content">Skip to content</a>
+    <div class="theme-toggle" role="group" aria-label="Color theme">
+      <button type="button" data-set-theme="light" aria-label="Use light theme" title="Light theme">{% include icon.html name="sun" %}</button>
+      <button type="button" data-set-theme="dark" aria-label="Use dark theme" title="Dark theme">{% include icon.html name="moon" %}</button>
+    </div>
+    <div class="layout">
+      {% include sidebar.html %}
+      <main id="layout-content" tabindex="-1">
+        {% unless page.url == "/" %}
+        <nav class="site-nav" aria-label="Page navigation"><a href="{{ '/' | relative_url }}">Home</a><span> / </span><span>{{ page.title | default: "Publications" | escape }}</span></nav>
+        {% endunless %}
+        {{ content }}
+        <footer class="site-footer">
+          <div class="visitors" aria-label="Site visitor statistics" aria-live="polite" aria-busy="true">
+            {% include icon.html name="eye" %}
+            <span id="busuanzi_container_site_pv">Page views <span id="busuanzi_value_site_pv">…</span></span>
+            <span aria-hidden="true">·</span>
+            <span id="busuanzi_container_site_uv">Visitors <span id="busuanzi_value_site_uv">…</span></span>
+          </div>
+          <span>© {{ site.time | date: "%Y" }} Yuhao He · Updated {{ site.time | date: "%Y/%m" }}{% if page.url == "/" %}<a id="owner-analytics" href="{{ '/github-traffic-vault/' | relative_url }}" hidden aria-label="Owner repository analytics" title="Owner access" style="margin-left:12px;font:11px/1.5 'JetBrains Mono',monospace;color:var(--text-3)">Analytics ↗</a>{% endif %}</span>
+        </footer>
+      </main>
+    </div>
+    <script src="{{ '/assets/js/academic.js' | relative_url }}?v=20261106" defer></script>
+    {% if page.url == "/" %}
+    <script>
+      // This marker controls presentation only. Private data access is verified by GitHub.
+      try { if (localStorage.getItem('github-traffic-owner') === 'Anson-He') document.getElementById('owner-analytics').hidden = false; } catch (e) {}
+    </script>
+    {% endif %}
+  </body>
+</html>
