@@ -1,8 +1,8 @@
 # GitHub 流量档案
 
-这是 Anson-He 的私密 GitHub 流量归档仓库。使用 **GitHub 官方 REST API + GitHub Actions** 每天采集，数据永久保存在本仓库的 Git 历史中，网站只向所有者开放。
+这是 Anson-He 的私密 GitHub 流量归档仓库。使用 **GitHub 官方 REST API + GitHub Actions** 每天采集，数据永久保存在本仓库的 Git 历史中，公开的静态界面通过浏览器直接读取私密仓库，流量数据不随网站公开。
 
-仪表盘：https://anson-github-traffic-vault.heyuhao2001.chatgpt.site
+仪表盘：https://anson-he.github.io/github-traffic-vault/
 
 ## 首次启用（必需）
 
@@ -17,15 +17,23 @@
 
 本工作流的 `GITHUB_TOKEN` 仅负责写入当前归档仓库；跨仓库流量读取使用上面的 `TRAFFIC_TOKEN`。不要试图通过 `permissions: contents: write` 替代 Traffic API 所需的 Administration 读取权限。
 
-## 网站读取数据
+## 网站读取数据（GitHub Pages）
 
-网站使用 Sites 的所有者私密访问策略，需要登录所有者账号。私密 GitHub 仓库本身不会让 GitHub Pages 自动变成私密网站，所以本项目没有开启 Pages。
+正式入口：**https://anson-he.github.io/github-traffic-vault/**
 
-推荐再创建一个 **仅选择 github-traffic-vault、仅 Contents: Read-only** 的 Fine-grained Token，在网站的“连接仓库”窗口输入。该 Token 仅保留在当前页面内存中，由网站后端向固定的 GitHub 内容接口读取档案，不会写入数据文件、浏览器持久存储或日志；刷新/关闭页面后需要重新输入。不建议把跨仓库的采集 Token 用在这里。
+网站界面部署在现有公开仓库 `Anson-He/Anson-He.github.io` 的 `github-traffic-vault/index.html`，保留原学术主页。公开仓库仅包含界面代码，流量 JSON、CSV、原始快照与 TRAFFIC_TOKEN 仍在本私密归档仓库中，绝不复制到公开网站。
 
-也可以下载 `data/dashboard.json`，在网站中点击“导入数据文件”，无须给网站任何 GitHub Token。手机端也可以在空状态中导入。
+1. 创建一个仅选择 `github-traffic-vault`、仅授予 **Contents: Read-only** 的 Fine-grained Token。
+2. 打开网站，点击“连接仓库”，输入该只读 Token。
+3. 浏览器直接请求固定地址 `https://api.github.com/repos/Anson-He/github-traffic-vault/contents/data/dashboard.json`；不会经过 ChatGPT 或自建后端。
+4. Token 仅保留在当前页面内存中，刷新、离开页面或“断开连接”后清除，不写入 localStorage、sessionStorage、URL、代码或数据文件。不要把跨仓库的采集 Token 用在网站中。
+5. 每日自动采集后，在已连接的页面点击“刷新数据”即可读取最新归档。
 
-如果希望每次打开网站自动读取，可通过 Sites 原生环境配置把上述单仓库只读 Token 存为 **秘密变量 `VAULT_READ_TOKEN`** 后重新部署；不要把它写进源码、hosting.json 或前端环境变量。配置前，网站不会自动拥有你的 GitHub 数据访问权。
+不想创建网站只读 Token 时，可以从本私密仓库下载 `data/dashboard.json`，在网站点击“导入数据文件”。文件在当前浏览器本地解析，不上传到公开网站。
+
+GitHub Pages 界面是公开的，能打开网址不代表能读取私密档案。网站没有访问者统计、第三方脚本或公开数据快照，也不需要配置服务端环境变量。页面只允许连接 GitHub API。
+
+Pages 发布源的备份在本私密仓库 `web/github-pages/index.html`，测试为 `tests/test-pages.mjs`。更新界面时，把该 HTML 同步到公开仓库的 `github-traffic-vault/index.html` 即触发已有的 GitHub Pages 发布流程。旧的 Sites/Worker 源文件保留作历史兼容，已不作为正式入口。
 
 ## 采集范围与文件结构
 
@@ -67,13 +75,10 @@ Python 3.12+、Node.js 20+，采集器与网站均无外部依赖。
 python3 -m unittest discover -s tests -p 'test_*.py'
 # 在终端安全设置 TRAFFIC_TOKEN 后：
 python3 scripts/collect.py
-node scripts/build.mjs
-node scripts/validate-artifact.mjs
-node tests/test-dashboard.mjs
-node scripts/preview.mjs
+node tests/test-pages.mjs
 ```
 
-本地预览只监听 `127.0.0.1:4173`。线上部署由 `.openai/hosting.json` 中绑定的 Sites 项目管理。发布时保持 owner-private，切勿因为数据读取失败而改成 public。
+GitHub Pages 页面为无构建依赖的静态 HTML，可本地打开测试导入功能；在线读取使用 GitHub API 的 CORS 支持。线上发布使用现有公开主页仓库的 GitHub Pages 配置，归档数据仓库保持 private。
 
 ## 官方文档
 
