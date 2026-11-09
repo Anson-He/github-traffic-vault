@@ -1,0 +1,6 @@
+{
+  "owner": "Anson-He",
+  "repository": "Anson-He/github-traffic-vault",
+  "exclude": ["Anson-He/github-traffic-vault"],
+  "include_archived": true
+}

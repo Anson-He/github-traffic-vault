@@ -1,0 +1,8 @@
+dist/
+site.tar.gz
+
+__pycache__/
+*.pyc
+.env
+.env.*
+!.env.example

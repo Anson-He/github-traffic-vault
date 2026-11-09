@@ -1,0 +1,11 @@
+import {readFile,writeFile,mkdir,rm,copyFile} from 'node:fs/promises';
+const root=new URL('../',import.meta.url);
+const source=await readFile(new URL('worker/index.js',root),'utf8');
+const html=await readFile(new URL('web/index.html',root),'utf8');
+if(!source.includes('/*HTML*/""'))throw Error('Missing HTML marker');
+await rm(new URL('dist/',root),{recursive:true,force:true});
+await mkdir(new URL('dist/server/',root),{recursive:true});
+await mkdir(new URL('dist/.openai/',root),{recursive:true});
+await writeFile(new URL('dist/server/index.js',root),source.replace('/*HTML*/""',()=>JSON.stringify(html)));
+await copyFile(new URL('.openai/hosting.json',root),new URL('dist/.openai/hosting.json',root));
+console.log('Built standalone dashboard Worker');

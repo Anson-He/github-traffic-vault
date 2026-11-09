@@ -1,0 +1,40 @@
+import assert from 'node:assert/strict';
+import vm from 'node:vm';
+import {readFile} from 'node:fs/promises';
+const source=await readFile(new URL('../dist/server/index.js',import.meta.url),'utf8');
+const {default:worker}=await import('data:text/javascript;base64,'+Buffer.from(source).toString('base64'));
+let response=await worker.fetch(new Request('https://test.invalid/'));
+assert.equal(response.status,200);
+assert.equal(response.headers.get('cache-control'),'private, no-store');
+const html=await response.text();
+assert.ok(html.includes('仓库访问，一目了然。'));
+response=await worker.fetch(new Request('https://test.invalid/api/data'));
+assert.equal(response.status,503);
+response=await worker.fetch(new Request('https://test.invalid/api/data',{method:'POST'}));
+assert.equal(response.status,405);
+const original=globalThis.fetch;
+try {
+ globalThis.fetch=async(url,options)=>{
+   assert.equal(url,'https://api.github.com/repos/Anson-He/github-traffic-vault/contents/data/dashboard.json');
+   assert.equal(options.headers.Authorization,'Bearer test-only');
+   return Response.json({schema_version:1,repositories:[]});
+ };
+ response=await worker.fetch(new Request('https://test.invalid/api/data',{headers:{'X-Vault-Token':'test-only'}}));
+ assert.equal(response.status,200);
+ assert.ok(!(await response.text()).includes('test-only'));
+}finally{globalThis.fetch=original}
+const script=html.match(/<script>([\s\S]*?)<\/script>/)[1];
+const elements=new Map();
+const element=id=>{if(!elements.has(id))elements.set(id,{value:id==='#range'?'14':'',innerHTML:'',textContent:'',querySelectorAll:()=>[],showModal(){},close(){},click(){}});return elements.get(id)};
+const ctx=vm.createContext({console,Date,Map,Set,URL,Blob,setTimeout,document:{querySelector:element,querySelectorAll:()=>[],createElement:()=>({click(){}})},window:{scrollTo(){}},fetch:()=>new Promise(()=>{})});
+vm.runInContext(script,ctx);
+assert.ok(element('#content').innerHTML.includes('连接私密仓库'));
+const today=new Date().toISOString().slice(0,10);
+vm.runInContext('data='+JSON.stringify({schema_version:1,generated_at:new Date().toISOString(),repositories:[{id:1,name:'Anson-He/<unsafe>',views:[{date:today,count:17,uniques:3}],clones:[],views_window:{uniques:3},snapshots:[],assets:[],referrers:[],paths:[]}],errors:[]})+';render()',ctx);
+assert.ok(element('#content').innerHTML.includes('&lt;unsafe&gt;'));
+assert.ok(!element('#content').innerHTML.includes('Anson-He/<unsafe>'));
+assert.ok(element('#content').innerHTML.includes('17'));
+vm.runInContext("selected='1';render()",ctx);
+assert.ok(element('#content').innerHTML.includes('人们从哪里来'));
+assert.ok(element('#content').innerHTML.includes('—'));
+console.log('Worker routes, read-only upstream, frontend syntax and data rendering verified');
