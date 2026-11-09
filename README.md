@@ -24,10 +24,10 @@
 网站界面部署在现有公开仓库 `Anson-He/Anson-He.github.io` 的 `github-traffic-vault/index.html`，保留原学术主页。公开仓库仅包含界面代码，流量 JSON、CSV、原始快照与 TRAFFIC_TOKEN 仍在本私密归档仓库中，绝不复制到公开网站。
 
 1. 创建一个仅选择 `github-traffic-vault`、仅授予 **Contents: Read-only** 的 Fine-grained Token。
-2. 打开网站，点击“连接仓库”，输入该只读 Token。
+2. 打开网站，点击“连接仓库”，输入该只读 Token。在自己的设备上勾选“记住此设备，下次自动连接”。
 3. 浏览器直接请求固定地址 `https://api.github.com/repos/Anson-He/github-traffic-vault/contents/data/dashboard.json`；不会经过 ChatGPT 或自建后端。
-4. Token 仅保留在当前页面内存中，刷新、离开页面或“断开连接”后清除，不写入 localStorage、sessionStorage、URL、代码或数据文件。不要把跨仓库的采集 Token 用在网站中。
-5. 每日自动采集后，在已连接的页面点击“刷新数据”即可读取最新归档。
+4. 不勾选时 Token 仅保留在当前页面内存中；勾选后，使用 Web Crypto AES-GCM 加密凭据，并把密文和不可导出的 CryptoKey 保存到当前浏览器的 IndexedDB。不会把明文 Token 写入 localStorage、sessionStorage、URL、代码或数据仓库。点击“断开连接并忘记”可删除设备记录。不要把跨仓库的采集 Token 用在网站中。
+5. 记住设备后，每次打开网站会自动恢复连接并获取最新归档，切回已打开的页面也会在距上次读取超过一分钟时刷新。Token 失效会提示重新连接并清除失效的设备记录。更换浏览器、清除网站数据或使用隐私模式时，可能需要重新连接。
 
 不想创建网站只读 Token 时，可以从本私密仓库下载 `data/dashboard.json`，在网站点击“导入数据文件”。文件在当前浏览器本地解析，不上传到公开网站。
 
