@@ -1,5 +1,8 @@
 name: Collect repository traffic
 on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/collect.yml']
   schedule:
     - cron: '23 2 * * *'
   workflow_dispatch:
