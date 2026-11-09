@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' https://busuanzi.ibruce.info; base-uri 'none'; form-action 'none'">
+<title>Isolated visitor counter</title>
+</head>
+<body>
+<span id="busuanzi_container_site_pv"><span id="busuanzi_value_site_pv"></span></span>
+<span id="busuanzi_container_site_uv"><span id="busuanzi_value_site_uv"></span></span>
+<script>
+(() => {
+  const publish = () => {
+    const pv = document.getElementById('busuanzi_value_site_pv').textContent.trim();
+    const uv = document.getElementById('busuanzi_value_site_uv').textContent.trim();
+    if (!/^\d{1,20}$/.test(pv) || !/^\d{1,20}$/.test(uv)) return;
+    parent.postMessage({ type: 'site-counter-result-v1', pv, uv }, 'https://anson-he.github.io');
+  };
+  const observer = new MutationObserver(publish);
+  observer.observe(document.body, { childList: true, characterData: true, subtree: true });
+  const script = document.createElement('script');
+  script.src = 'https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js';
+  script.async = true;
+  document.head.appendChild(script);
+})();
+</script>
+</body>
+</html>

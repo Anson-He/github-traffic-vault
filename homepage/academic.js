@@ -25,22 +25,30 @@
       if (el && !/^\d/.test(el.textContent)) el.textContent = '—';
     });
   };
-  if (location.hostname !== 'anson-he.github.io') { unavailable(); return; }
-  // Owner devices hold a private dashboard connection on this origin.
-  // Keep third-party counter code off those devices; public visitor behavior is unchanged.
-  try { if (localStorage.getItem('github-traffic-owner') === 'Anson-He') { unavailable(); return; } } catch (e) {}
-  const script = document.createElement('script');
-  script.src = 'https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js';
-  script.async = true;
-  script.onerror = unavailable;
-  const observer = new MutationObserver(() => {
-    if (['busuanzi_value_site_pv', 'busuanzi_value_site_uv'].every(id => /^\d/.test(document.getElementById(id)?.textContent || ''))) {
-      stats?.setAttribute('aria-busy', 'false');
-      stats?.removeAttribute('title');
-      observer.disconnect();
-    }
-  });
-  if (stats) observer.observe(stats, { childList: true, subtree: true });
-  document.body.appendChild(script);
-  setTimeout(unavailable, 15000);
+  if (!stats || location.hostname !== 'anson-he.github.io') { unavailable(); return; }
+  // Keep third-party code in an opaque-origin sandbox, away from private browser storage.
+  const frame = document.createElement('iframe');
+  frame.src = '/assets/visitor-counter.html';
+  frame.setAttribute('sandbox', 'allow-scripts');
+  frame.setAttribute('aria-hidden', 'true');
+  frame.setAttribute('title', 'Isolated visitor counter');
+  frame.hidden = true;
+  frame.tabIndex = -1;
+  let received = false;
+  const onCounter = event => {
+    if (event.source !== frame.contentWindow || event.origin !== 'null') return;
+    const value = event.data;
+    if (value?.type !== 'site-counter-result-v1' ||
+        !/^\d{1,20}$/.test(String(value.pv)) || !/^\d{1,20}$/.test(String(value.uv))) return;
+    document.getElementById('busuanzi_value_site_pv').textContent = String(value.pv);
+    document.getElementById('busuanzi_value_site_uv').textContent = String(value.uv);
+    stats.setAttribute('aria-busy', 'false');
+    stats.removeAttribute('title');
+    received = true;
+    window.removeEventListener('message', onCounter);
+  };
+  window.addEventListener('message', onCounter);
+  frame.onerror = unavailable;
+  document.body.appendChild(frame);
+  setTimeout(() => { if (!received) unavailable(); }, 15000);
 })();
